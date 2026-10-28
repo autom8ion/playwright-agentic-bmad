@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1.2.2
         with:
-          k6-version: '1.5.0'
+          k6-version: '2.3.0'
       - run: mkdir -p perf/results && k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json
         env:
           VUS: ${{ inputs.vus }}
