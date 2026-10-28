@@ -55,7 +55,18 @@ Re-run `/bmad-testarch-trace` to show the gate move.
 ```
 TEA scores the suite against its knowledge base (determinism, isolation, explicit waits, assertion quality) and lists findings.
 
-## 7. Bonus: Playwright's own agents
+## 7. NFR: performance with k6 (3 min)
+```bash
+npm run perf:api      # 3 VUs × 30s against the API; thresholds are the NFR3 gate
+```
+Show the threshold block (✓/✗ per endpoint p95, error rate). Then:
+```
+/bmad-testarch-nfr
+```
+Point TEA at NFR3 in the PRD and at `perf/results/api-baseline.json` as evidence. It assesses performance, security, reliability and maintainability, and flags what has no evidence yet (security and maintainability, here).
+Talking point: the load stays deliberately small because Toolshop is someone else's public site. Raise `VUS`/`DURATION` only against a self-hosted copy.
+
+## 8. Bonus: Playwright's own agents
 `.claude/agents/` contains Playwright's **planner**, **generator** and **healer**, which run against `tests/ui/seed.spec.ts`.
 - Break a locator (for example, change `'add-to-cart'` in `src/pages/ProductPage.ts`), run the test, then ask Claude: *"use the playwright-test-healer agent to fix the failing cart test"*.
 - Or: *"use the playwright-test-planner agent to plan tests for the Contact page"* → `specs/`, then the generator turns that plan into specs.
