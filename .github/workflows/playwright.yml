@@ -19,10 +19,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npx playwright install --with-deps
       # Public seed account and URLs only; nothing secret.
       - run: cp .env.example .env
-      - run: npx playwright test
+      # API only: Toolshop's Cloudflare bot check blocks GitHub-hosted runners from the UI.
+      # Run UI projects locally, or add a self-hosted runner job with `npx playwright install --with-deps && npx playwright test`.
+      - run: npx playwright test --project=api
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

@@ -9,7 +9,8 @@ Requirements live in `_bmad-output/planning-artifacts/` (PRD.md, epics.md). TEA 
 ```
 /bmad-tea
 ```
-Murat, TEA's agent, loads with a menu of workflows. Point out that TEA is configured for this repo in `_bmad/tea/config.yaml`: `test_framework: playwright`, `test_stack_type: fullstack`, `tea_browser_automation: mcp`.
+Murat, TEA's agent, loads with a menu of workflows. Point out that TEA is configured for this repo in `_bmad/tea/config.yaml`: `test_framework: playwright`, `test_stack_type: fullstack`, `tea_browser_automation: auto` (Playwright CLI first, MCP when it needs more).
+Tip: run `playwright-cli show` in a second terminal so the audience can watch the browser sessions TEA opens.
 
 ## 2. Risk-based test design (4 min)
 ```
@@ -23,6 +24,8 @@ Talking point: the plan calls out the real environment risks recorded in the PRD
 npm run test:smoke          # @smoke across chromium/firefox/webkit + API
 npx playwright test --ui    # UI mode: watch the checkout wizard
 npm run report
+# optional, richer history/categories view:
+npm run test:allure && npm run allure:report
 ```
 Walk through the patterns:
 - `src/pages/`: page objects with intent-level methods.

@@ -2,7 +2,7 @@ import tseslint from 'typescript-eslint';
 import playwright from 'eslint-plugin-playwright';
 
 export default tseslint.config(
-  { ignores: ['node_modules', 'playwright-report', 'test-results', '_bmad', '_bmad-output', '.claude'] },
+  { ignores: ['node_modules', 'playwright-report', 'test-results', '_bmad', '_bmad-output', '.claude', 'allure-report', 'allure-results', '.playwright-cli'] },
   ...tseslint.configs.recommended,
   {
     files: ['tests/**/*.ts'],

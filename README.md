@@ -14,7 +14,22 @@ npm run test:smoke       # @smoke only
 npm run test:api         # API only
 npm run test:ui          # chromium UI only
 npm run report
+
+# Optional: Allure report (off unless ALLURE is set)
+npm run test:allure      # same tests, also writes allure-results/
+npm run allure:report    # build + open allure-report/
 ```
+
+## Playwright CLI (for agents)
+[`@playwright/cli`](https://github.com/microsoft/playwright-cli) gives Claude Code a token-efficient browser it drives with short shell commands. It's a lighter alternative to the MCP for exploring pages and picking locators.
+```bash
+npm i -g @playwright/cli@0.1.22   # TEA calls the bare `playwright-cli` command, so it must be on PATH
+playwright-cli open https://practicesoftwaretesting.com --headed
+playwright-cli snapshot           # accessibility snapshot with element refs
+playwright-cli show               # dashboard of the browser sessions agents are running
+```
+It's also a devDependency (`npx playwright-cli`), and its Claude Code skill is in `.claude/skills/playwright-cli/`.
+TEA uses `tea_browser_automation: auto`: it starts with the CLI and escalates to the Playwright MCP when it needs deeper inspection.
 
 ## Layout
 ```
@@ -26,7 +41,7 @@ src/fixtures/index.ts    test.extend: page objects, api, newUser, signedInUser
 tests/auth.setup.ts      seed-customer login → storageState
 tests/ui, tests/api      specs, tagged @smoke / @regression
 _bmad/                   BMAD core + BMM + TEA (installed by `npx bmad-method install`)
-.claude/skills/          BMAD/TEA slash commands for Claude Code
+.claude/skills/          BMAD/TEA slash commands + playwright-cli skill for Claude Code
 .claude/agents/          Playwright planner / generator / healer agents
 _bmad-output/            PRD + epics (inputs) and TEA test artifacts (outputs)
 ```
@@ -46,6 +61,7 @@ The BMM v6 installer bundles TEA **v1.27**, with commands `/bmad-tea`, `/bmad-te
 TEA settings are in `_bmad/tea/config.yaml`. To change one: `npx bmad-method install --action quick-update --yes --set tea.<key>=<value>`.
 
 ## Toolshop quirks worth knowing
+- **Cloudflare bot check:** GitHub-hosted runners (datacenter IPs) get a "Performing security verification" challenge on the UI. CI therefore runs lint, typecheck and the API project only, and UI tests run locally. `LoginPage.goto()` reports the challenge explicitly instead of timing out.
 - **Cold starts:** the first request can take 15s+. The config uses a 45s navigation timeout and 1 retry locally / 2 in CI.
 - **JWTs live 5 minutes:** `auth.setup.ts` logs in on every run instead of caching state.
 - **The catalog uses the HTTP `QUERY` method:** waits match on the endpoint path, not GET + query string.

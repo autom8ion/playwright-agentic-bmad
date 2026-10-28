@@ -11,7 +11,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 2 : undefined,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    // Opt-in: ALLURE=1 npm test (or npm run test:allure), then npm run allure:report.
+    ...(process.env.ALLURE ? [['allure-playwright', { resultsDir: 'allure-results' }] as const] : []),
+  ],
   timeout: 60_000,
   expect: { timeout: 10_000 },
   use: {
