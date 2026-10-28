@@ -9,3 +9,4 @@ playwright/.auth/
 .playwright-cli/
 allure-results/
 allure-report/
+perf/results/

@@ -1,0 +1,31 @@
+name: k6 API baseline (NFR3)
+
+# Manual only: Toolshop is a shared public site, so we never generate load on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: Virtual users (keep small against the public site)
+        default: '3'
+      duration:
+        description: Test duration (under 5m, the JWT lifetime)
+        default: '30s'
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1.2.2
+        with:
+          k6-version: '2.3.0'
+      - run: mkdir -p perf/results && k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json
+        env:
+          VUS: ${{ inputs.vus }}
+          DURATION: ${{ inputs.duration }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: k6-api-baseline
+          path: perf/results/

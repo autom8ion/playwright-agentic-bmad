@@ -11,6 +11,7 @@ npm run test:ui               # chromium only
 npx playwright test path/to/spec.ts --project=chromium --retries=0   # check a single spec honestly
 npm run lint && npm run typecheck   # run both before calling anything done
 npm run test:allure && npm run allure:report   # optional Allure (reporter only loads when ALLURE is set)
+npm run perf:api              # k6 API baseline (NFR3); needs the k6 binary
 ```
 Needs `.env` (`cp .env.example .env`); it only holds the public seed account.
 When checking a fix for flakiness, use `--retries=0 --repeat-each=5`. Config retries hide flakes.
@@ -21,6 +22,7 @@ When checking a fix for flakiness, use `--retries=0 --repeat-each=5`. Config ret
 - `src/factories/`: `buildUser()`, `buildAddress()` (faker, `Partial<>` overrides)
 - `src/api/ToolshopApi.ts`: typed API client for setup and API tests
 - `tests/ui/`, `tests/api/`, `tests/auth.setup.ts`; `tests/ui/seed.spec.ts` is the seed for Playwright's agents
+- `perf/`: k6 scripts (TypeScript, run by k6 directly, not by Node). Thresholds encode NFR3 in the PRD, so change them only with the PRD.
 - Path aliases: `@pages/*`, `@api/*`, `@factories/*`, `@fixtures`
 
 ## Conventions
@@ -39,6 +41,7 @@ When checking a fix for flakiness, use `--retries=0 --repeat-each=5`. Config ret
 - **JWTs expire after 5 minutes**, so `auth.setup.ts` logs in on every run. The app keeps the token in `localStorage['auth-token']`; `signedInUser` seeds it with `addInitScript`.
 - **Cold starts of 15s+ and occasional 500s** ("Something went wrong") are the shared site, not our code. Hence the 45s navigation timeout and retries.
 - **Cloudflare challenges datacenter IPs**: GitHub-hosted runners get "Performing security verification" on the UI. CI runs lint + typecheck + `--project=api` only. Never try to bypass the challenge. Run UI tests locally or on a self-hosted runner.
+- **k6 load must stay light against the public site** (default 3 VUs × 30s, think time 1s). Keep any k6 run under 5 minutes, because the setup token expires. Heavier profiles belong against a self-hosted Toolshop only.
 - Payment: only `cash-on-delivery` is implemented in `CheckoutPage.pay`. Other methods need extra fields.
 
 ## Agentic tooling

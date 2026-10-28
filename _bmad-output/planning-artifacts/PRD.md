@@ -24,6 +24,7 @@ Customers can find tools, buy them, and manage an account, without errors that b
 ## Non-functional requirements
 - **NFR1 Reliability:** the critical path (FR1, FR4, FR5) passes on Chromium, Firefox and WebKit.
 - **NFR2 Test isolation:** every test creates its own data and can run in parallel against the shared public site.
+- **NFR3 API performance:** under a light baseline load (3 virtual users, 30s), the API's p95 response time is under 1000ms overall and per endpoint (list, search), and under 800ms for product detail and `/users/me`. Error rate is under 1% and functional checks pass at 99% or more. Evidence: `npm run perf:api` (k6 thresholds; summary in `perf/results/api-baseline.json`).
 
 ## Known environment constraints
 - Shared public demo: cold starts of 15s+ have been observed; data is reset periodically.
