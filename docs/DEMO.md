@@ -59,7 +59,7 @@ TEA scores the suite against its knowledge base (determinism, isolation, explici
 ```bash
 npm run perf:api      # 3 VUs × 30s against the API; thresholds are the NFR3 gate
 ```
-Show the threshold block (✓/✗ per endpoint p95, error rate). Then:
+Show the threshold block (✓/✗ per endpoint p95, error rate), then open `perf/results/dashboard.html` for the charts. On GitHub, the *k6 API baseline* workflow run shows the same results as a job summary. Then:
 ```
 /bmad-testarch-nfr
 ```

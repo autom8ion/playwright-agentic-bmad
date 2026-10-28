@@ -12,7 +12,7 @@
     "typecheck": "tsc",
     "test:allure": "ALLURE=1 playwright test",
     "allure:report": "allure generate allure-results -o allure-report && allure open allure-report",
-    "perf:api": "mkdir -p perf/results && k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json"
+    "perf:api": "mkdir -p perf/results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_PERIOD=2s K6_WEB_DASHBOARD_EXPORT=perf/results/dashboard.html k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json"
   },
   "keywords": [],
   "type": "module",

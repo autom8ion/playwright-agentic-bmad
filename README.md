@@ -26,8 +26,10 @@ brew install k6          # or see https://grafana.com/docs/k6/latest/set-up/inst
 npm run perf:api         # light baseline: 3 VUs × 30s; fails (exit 99) if a threshold is crossed
 VUS=5 DURATION=1m npm run perf:api
 ```
+Each run also exports k6's **web dashboard** as `perf/results/dashboard.html`, a self-contained report with latency, throughput and error charts; open it in a browser. To watch a run live, use `K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_OPEN=true k6 run perf/api-baseline.ts`.
+
 `perf/api-baseline.ts` (k6 runs TypeScript natively) browses products, views a product, searches and fetches the signed-in profile. Its thresholds are NFR3 from the PRD. The summary goes to `perf/results/api-baseline.json`, which is evidence for `/bmad-testarch-nfr`.
-In CI it runs only on demand (Actions → *k6 API baseline* → Run workflow). Keep the load small: Toolshop is a shared public site.
+In CI it runs only on demand (Actions → *k6 API baseline* → Run workflow). The run page shows a **job summary** with a pass/fail threshold table and per-endpoint latency, rendered by `perf/summary-markdown.mjs`. It links the `k6-api-baseline` artifact, which holds the HTML dashboard. Keep the load small: Toolshop is a shared public site.
 
 ## Playwright CLI (for agents)
 [`@playwright/cli`](https://github.com/microsoft/playwright-cli) gives Claude Code a token-efficient browser it drives with short shell commands. It's a lighter alternative to the MCP for exploring pages and picking locators.
