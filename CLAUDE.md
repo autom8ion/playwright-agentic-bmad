@@ -11,7 +11,7 @@ npm run test:ui               # chromium only
 npx playwright test path/to/spec.ts --project=chromium --retries=0   # check a single spec honestly
 npm run lint && npm run typecheck   # run both before calling anything done
 npm run test:allure && npm run allure:report   # optional Allure (reporter only loads when ALLURE is set)
-npm run perf:api              # k6 API baseline (NFR3); needs the k6 binary
+npm run perf:api              # k6 API baseline (NFR3); needs the k6 binary; writes perf/results/{api-baseline.json,dashboard.html}
 ```
 Needs `.env` (`cp .env.example .env`); it only holds the public seed account.
 When checking a fix for flakiness, use `--retries=0 --repeat-each=5`. Config retries hide flakes.
@@ -22,6 +22,7 @@ When checking a fix for flakiness, use `--retries=0 --repeat-each=5`. Config ret
 - `src/factories/`: `buildUser()`, `buildAddress()` (faker, `Partial<>` overrides)
 - `src/api/ToolshopApi.ts`: typed API client for setup and API tests
 - `tests/ui/`, `tests/api/`, `tests/auth.setup.ts`; `tests/ui/seed.spec.ts` is the seed for Playwright's agents
+- `perf/summary-markdown.mjs`: turns k6's summary JSON into the GitHub job summary (k6 marks a threshold `true` when crossed)
 - `perf/`: k6 scripts (TypeScript, run by k6 directly, not by Node). Thresholds encode NFR3 in the PRD, so change them only with the PRD.
 - Path aliases: `@pages/*`, `@api/*`, `@factories/*`, `@fixtures`
 

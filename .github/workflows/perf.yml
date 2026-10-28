@@ -20,12 +20,22 @@ jobs:
       - uses: grafana/setup-k6-action@v1.2.2
         with:
           k6-version: '2.3.0'
-      - run: mkdir -p perf/results && k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json
+      - name: Run k6 baseline
+        run: mkdir -p perf/results && k6 run perf/api-baseline.ts --summary-export=perf/results/api-baseline.json
         env:
           VUS: ${{ inputs.vus }}
           DURATION: ${{ inputs.duration }}
-      - uses: actions/upload-artifact@v4
+          # Built-in web dashboard, exported as a self-contained HTML report when the run ends.
+          K6_WEB_DASHBOARD: 'true'
+          K6_WEB_DASHBOARD_EXPORT: perf/results/dashboard.html
+      # The following steps also run when thresholds fail: that's when the report matters most.
+      - name: Upload k6 report
+        id: report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: k6-api-baseline
           path: perf/results/
+      - name: Job summary
+        if: ${{ !cancelled() && hashFiles('perf/results/api-baseline.json') != '' }}
+        run: node perf/summary-markdown.mjs perf/results/api-baseline.json "${{ steps.report.outputs.artifact-url }}" >> "$GITHUB_STEP_SUMMARY"

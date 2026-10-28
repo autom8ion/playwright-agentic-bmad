@@ -50,7 +50,10 @@ export default function ({ token }: { token: string }) {
     const list = http.get(`${API}/products?page=${1 + (__ITER % 3)}`, { tags: { name: 'list-products' } });
     check(list, { 'list 200': (r) => r.status === 200, 'list has products': (r) => { const data = r.json('data'); return Array.isArray(data) && data.length > 0; } });
 
-    const id = list.json('data.0.id') as string;
+    // If the list came back empty (Toolshop resets its data periodically), the failed check above records it.
+    // Don't also request /products/undefined, which would count the same glitch again as a fake 404.
+    const id = list.json('data.0.id') as string | undefined;
+    if (!id) return;
     const detail = http.get(`${API}/products/${id}`, { tags: { name: 'product-detail' } });
     check(detail, { 'detail 200': (r) => r.status === 200, 'detail matches id': (r) => r.json('id') === id });
   });
